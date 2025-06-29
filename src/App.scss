@@ -1,0 +1,36 @@
+.button {
+  margin: 20px 0;
+  cursor: pointer;
+
+  &__facebook,
+  &__google {
+    font-weight: 600;
+    font-size: 18px;
+    color: #fff;
+    transition: all 0.5s ease;
+    border: none;
+    padding: 20px;
+    border-radius: 8px;
+
+    &:hover {
+      filter: brightness(1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &__facebook {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+
+    &:hover {
+      background: linear-gradient(-135deg, #667eea, #764ba2);
+    }
+  }
+
+  &__google {
+    background: linear-gradient(135deg, #f7971e, #ffd200, #fcb045, #ee0979);
+
+    &:hover {
+      background: linear-gradient(-135deg, #f7971e, #ffd200, #fcb045, #ee0979);
+    }
+  }
+}
