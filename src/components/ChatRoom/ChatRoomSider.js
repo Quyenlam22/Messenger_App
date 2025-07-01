@@ -1,9 +1,12 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Avatar, Button, Flex, Menu } from "antd";
 import { Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import { LogoutOutlined, PlusCircleOutlined, WechatOutlined } from "@ant-design/icons";
 import { AuthContext } from "../../Context/AuthProvider";
+import { signOut } from "firebase/auth";
+import { auth, db } from "../../firebase/config";
+import { collection, onSnapshot } from "firebase/firestore";
 
 const items =
 [
@@ -35,6 +38,25 @@ function ChatRoomSider (props) {
   const user = useContext(AuthContext);
   const { colorBgContainer, collapsed, setCollapsed } = props;
 
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, "users"), (snapshot) => {
+      const data = snapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id
+      }));
+      console.log(data);
+    })
+
+    // const unsubscribe = onSnapshot(doc(db, "users", "SF"), (doc) => {
+    //     console.log("Current data: ", doc.data());
+    // });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = () => {
+    signOut(auth);
+  }
+
   return (
     <>
       <Sider 
@@ -57,7 +79,7 @@ function ChatRoomSider (props) {
             align="center" 
             vertical={false}
           >
-            <Avatar className="info-user__avatar" src={user.photoURL} />
+            <Avatar referrerPolicy="no-referrer" className="info-user__avatar" src={user.photoURL} />
             <h3 className={`info-user__display-name ${collapsed ? "collapsed" : ""}`} >{user.displayName}</h3>
           </Flex>
         </Header>
@@ -77,6 +99,7 @@ function ChatRoomSider (props) {
             className="button__logout"
             size="large"
             type="text"
+            onClick={handleLogout}
           >
             {collapsed ? 
               <LogoutOutlined /> : 

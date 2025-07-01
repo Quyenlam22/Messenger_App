@@ -17,28 +17,28 @@ function ChatRoom () {
     document.title = 'ChitChat'
   }, []);
 
-  console.log(user);
-
   return (
     <>
-      <Layout className="chat-room">
-        <ChatRoomSider 
-          colorBgContainer={colorBgContainer}
-          collapsed={collapsed}
-          setCollapsed={setCollapsed}
-        />
-        <Layout>
-          <ChatRoomHeader 
+      {user && (
+        <Layout className="chat-room">
+          <ChatRoomSider 
             colorBgContainer={colorBgContainer}
             collapsed={collapsed}
             setCollapsed={setCollapsed}
           />
-          <ChatRoomContent
-            colorBgContainer={colorBgContainer}
-            borderRadiusLG={borderRadiusLG}
-          />
+          <Layout>
+            <ChatRoomHeader 
+              colorBgContainer={colorBgContainer}
+              collapsed={collapsed}
+              setCollapsed={setCollapsed}
+            />
+            <ChatRoomContent
+              colorBgContainer={colorBgContainer}
+              borderRadiusLG={borderRadiusLG}
+            />
+          </Layout>
         </Layout>
-      </Layout>
+      )}
     </>
   )
 }

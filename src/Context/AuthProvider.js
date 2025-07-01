@@ -8,23 +8,24 @@ export const AuthContext = createContext();
 
 function AuthProvider ({ children }) {
   const navigate = useNavigate();
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        const infoUser = {
-          displayName: user.displayName,
-          email: user.email,
-          uid: user.uid,
-          photoURL: user.photoURL
-        };
+        // const infoUser = {
+        //   displayName: user.displayName,
+        //   email: user.email,
+        //   uid: user.uid,
+        //   photoURL: user.photoURL
+        // };
+        const infoUser = user.providerData[0];
         setUser(infoUser);
         navigate("/");
       }
       else {
-        setUser({});
+        setUser(null);
         navigate("/login");
       }
       setLoading(false);
