@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, FacebookAuthProvider, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getAuth, FacebookAuthProvider, GoogleAuthProvider, connectAuthEmulator } from "firebase/auth";
+import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -14,9 +14,16 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// Optional: only works in browser environments that support analytics
+if (typeof window !== 'undefined') {
+  getAnalytics(app);
+}
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+if(window.location.hostname === "localhost") {
+  connectAuthEmulator(auth, "http://localhost:9099");
+  connectFirestoreEmulator(db, 'localhost', 8080);
+}
 export const fbProvider = new FacebookAuthProvider();
 export const googleProvider = new GoogleAuthProvider();
