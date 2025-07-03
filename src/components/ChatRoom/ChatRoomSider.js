@@ -1,57 +1,39 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { Avatar, Button, Flex, Menu } from "antd";
 import { Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import { LogoutOutlined, PlusCircleOutlined, WechatOutlined } from "@ant-design/icons";
 import { AuthContext } from "../../Context/AuthProvider";
 import { signOut } from "firebase/auth";
-import { auth, db } from "../../firebase/config";
-import { collection, onSnapshot } from "firebase/firestore";
-
-const items =
-[
-  {
-    key: 'list-room-chat',
-    icon: <WechatOutlined />,
-    label: 'List Room Chat',
-    children: [
-      {
-        key: 'room-chat-1',
-        icon: <WechatOutlined />,
-        label: 'Room Chat 1',
-      },
-      {
-        key: 'room-chat-2',
-        icon: <WechatOutlined />,
-        label: 'Room Chat 2',
-      }
-    ]
-  },
-  {
-    key: 'add-room-chat',
-    icon: <PlusCircleOutlined />,
-    label: 'Add Room Chat',
-  }
-]
+import { auth } from "../../firebase/config";
+import { AppContext } from "../../Context/AppProvider";
 
 function ChatRoomSider (props) { 
   const user = useContext(AuthContext);
   const { colorBgContainer, collapsed, setCollapsed } = props;
 
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "users"), (snapshot) => {
-      const data = snapshot.docs.map(doc => ({
-        ...doc.data(),
-        id: doc.id
-      }));
-      console.log(data);
-    })
+  const rooms = useContext(AppContext);
 
-    // const unsubscribe = onSnapshot(doc(db, "users", "SF"), (doc) => {
-    //     console.log("Current data: ", doc.data());
-    // });
-    return () => unsubscribe();
-  }, []);
+  const items =
+  [
+    {
+      key: 'list-room-chat',
+      icon: <WechatOutlined />,
+      label: 'List Room Chat',
+      children:
+        rooms.map((room) => {
+          return {
+            key: room.id,
+            label: room.name,
+          }
+        })
+    },
+    {
+      key: 'add-room-chat',
+      icon: <PlusCircleOutlined />,
+      label: 'Add Room Chat',
+    }
+  ]
 
   const handleLogout = () => {
     signOut(auth);
@@ -79,7 +61,9 @@ function ChatRoomSider (props) {
             align="center" 
             vertical={false}
           >
-            <Avatar referrerPolicy="no-referrer" className="info-user__avatar" src={user.photoURL} />
+            <Avatar referrerPolicy="no-referrer" className="info-user__avatar" src={user.photoURL} >
+              {user.photoURL ? '' : user.displayName?.charAt(0)?.toUpperCase()}
+            </Avatar>
             <h3 className={`info-user__display-name ${collapsed ? "collapsed" : ""}`} >{user.displayName}</h3>
           </Flex>
         </Header>

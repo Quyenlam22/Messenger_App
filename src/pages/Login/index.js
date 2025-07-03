@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { Flex } from 'antd';
 import './Login.scss';
 import { FacebookOutlined, GoogleOutlined } from '@ant-design/icons'
@@ -6,13 +6,12 @@ import { signInWithPopup } from "firebase/auth";
 import { auth, fbProvider, googleProvider } from "../../firebase/config";
 import { AuthContext } from "../../Context/AuthProvider";
 import { addDocument } from "../../firebase/services";
+import useTitle from "../../hooks/useTitle";
 
 function Login () {
   const user = useContext(AuthContext);
   
-  useEffect(() => {
-    document.title = 'Login'
-  }, []);
+  useTitle('Login');
 
   const handleFBLogin = async () => {
     try {

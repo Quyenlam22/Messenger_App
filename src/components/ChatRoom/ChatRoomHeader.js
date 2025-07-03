@@ -35,7 +35,7 @@ function ChatRoomHeader (props) {
           >
             <UserAddOutlined /> Invite
           </Button>
-          <Avatar.Group maxCount={2}>
+          <Avatar.Group max={{count: 2}}>
             <Tooltip title='A'>
               <Avatar>A</Avatar>
             </Tooltip>

@@ -1,10 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../Context/AuthProvider";
 import { Layout, theme } from "antd";
 import "./ChatRoom.scss";
 import ChatRoomSider from "../../components/ChatRoom/ChatRoomSider";
 import ChatRoomHeader from "../../components/ChatRoom/ChatRoomHeader";
 import ChatRoomContent from "../../components/ChatRoom/ChatRoomContent";
+import useTitle from "../../hooks/useTitle";
 
 function ChatRoom () {
   const user = useContext(AuthContext);
@@ -13,9 +14,7 @@ function ChatRoom () {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  useEffect(() => {
-    document.title = 'ChitChat'
-  }, []);
+  useTitle('ChitChat');
 
   return (
     <>

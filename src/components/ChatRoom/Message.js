@@ -27,7 +27,9 @@ function Message() {
       </div>
       <div className="message__box">
         <Flex align="center">
-          <Avatar className="message__avatar" src={user.photoURL} />
+          <Avatar className="message__avatar" src={user.photoURL} >
+            {user.photoURL ? '' : user.displayName?.charAt(0)?.toUpperCase()}
+          </Avatar>
           <span className="message__name">{user.displayName}</span>
           <span className="message__time">Today at 11:00 PM</span>
         </Flex>
@@ -35,7 +37,9 @@ function Message() {
       </div>
       <div className="message__box">
         <Flex align="center">
-          <Avatar className="message__avatar" src={user.photoURL} />
+          <Avatar className="message__avatar" src={user.photoURL} >
+            {user.photoURL ? '' : user.displayName?.charAt(0)?.toUpperCase()}
+          </Avatar>
           <span className="message__name">{user.displayName}</span>
           <span className="message__time">Today at 11:00 PM</span>
         </Flex>
