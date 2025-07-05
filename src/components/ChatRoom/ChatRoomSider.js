@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Avatar, Button, Flex, Menu } from "antd";
 import { Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
@@ -7,13 +7,19 @@ import { AuthContext } from "../../Context/AuthProvider";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import { AppContext } from "../../Context/AppProvider";
+import CreateRoom from "./CreateRoom";
 
 function ChatRoomSider (props) { 
   const user = useContext(AuthContext);
   const { colorBgContainer, collapsed, setCollapsed } = props;
 
-  const rooms = useContext(AppContext);
+  const {rooms, setSelectedRoomId} = useContext(AppContext);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  
   const items =
   [
     {
@@ -25,6 +31,7 @@ function ChatRoomSider (props) {
           return {
             key: room.id,
             label: room.name,
+            onClick: () => setSelectedRoomId(room.id)
           }
         })
     },
@@ -32,6 +39,8 @@ function ChatRoomSider (props) {
       key: 'add-room-chat',
       icon: <PlusCircleOutlined />,
       label: 'Add Room Chat',
+      title: null,
+      onClick: () => showModal()
     }
   ]
 
@@ -75,10 +84,11 @@ function ChatRoomSider (props) {
           <Menu
             className="menu"
             mode="inline"
-            defaultSelectedKeys={['room-chat-1']}
+            defaultSelectedKeys={['list-room-chat']}
             defaultOpenKeys={['list-room-chat']}
             items={items}
           />
+          <CreateRoom isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
           <Button 
             className="button__logout"
             size="large"

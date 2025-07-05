@@ -2,9 +2,24 @@ import { Button, Flex, Input, Form } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { SendOutlined } from "@ant-design/icons";
 import Message from "./Message";
+// import { useContext } from "react";
+// import { AuthContext } from "../../Context/AuthProvider";
 
 function ChatRoomContent (props) {
   const { borderRadiusLG, colorBgContainer } = props;
+  // const users = useContext(AuthContext);
+
+  // users.forEach(item => {
+  //   const date = new Date(Number(item.createdAt)).toLocaleDateString('vi-VN', {
+  //     day: '2-digit',
+  //     month: '2-digit',
+  //     year: 'numeric',
+  //     hour: '2-digit',
+  //     minute: '2-digit',
+  //     // second: '2-digit',
+  //     // hour12: false // AM/PM
+  //   });
+  // })  
 
   const onFinish = values => {
     console.log('Success:', values);
