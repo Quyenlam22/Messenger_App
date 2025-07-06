@@ -1,31 +1,16 @@
-import { Avatar, Button, Form, Input, Modal, Select } from "antd";
-import { useContext, useMemo } from "react";
-import { AuthContext } from "../../Context/AuthProvider";
-import useFirestore from "../../hooks/useFirestore";
-import { addDocument } from "../../firebase/services";
+import { Avatar, Button, Form, Modal, Select } from "antd";
+import { useContext } from "react";
+import { AppContext } from "../../Context/AppProvider";
+import { db } from "../../firebase/config";
+import { doc, updateDoc } from "firebase/firestore";
 
 const { Option } = Select;
 
-const rules = [
-  { 
-    required: true, 
-    message: "Please don't leave this field blank!" 
-  }
-];
-
-function CreateRoom (props) {
+function InviteMembers (props) {
   const {isModalOpen, setIsModalOpen} = props;
-  const user = useContext(AuthContext);
+  const {selectedRoomId, selectedRoom, membersInvite} = useContext(AppContext);
 
-  const usersCondition = useMemo(() => {
-    if (!user?.uid) return null;
-    return {
-      fieldName: "uid",
-      operator: "!=",
-      compareValue: user.uid
-    };
-  }, [user?.uid])
-  const users = useFirestore("users", usersCondition);
+  console.log(selectedRoom);
   
   const [ form ] = Form.useForm();
 
@@ -35,18 +20,18 @@ function CreateRoom (props) {
   };
 
   const onFinish = async (values) => {
-    const dataRoom = { 
-      name: values.name,
-      desc: values.desc || '',
-      members: [
-        ...(values.members || []),
-        user.uid
-      ] ,
-      createdAt: Date.now()
+    if (values && values.members?.length > 0) {
+      try {
+        const roomRef = doc(db, 'rooms', selectedRoomId);
+        await updateDoc(roomRef, {
+          members: [...selectedRoom.members, ...values.members]
+        });
+        form.resetFields();
+        setIsModalOpen(false);
+      } catch (error) {
+        console.error("Update failed:", error);
+      }
     }
-    await addDocument("rooms", dataRoom);
-    form.resetFields();
-    setIsModalOpen(false);
   };
   const onFinishFailed = errorInfo => {
     console.log('Failed:', errorInfo);
@@ -55,14 +40,14 @@ function CreateRoom (props) {
   return (
     <>
       <Modal
-        title="Create Room"
+        title="Invite Members"
         open={isModalOpen}
         footer={null}
         onCancel={handleCancel}
       >
         <Form
           form={form}
-          name="create-room"
+          name="invite-members"
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           labelCol={{ span: 6 }}
@@ -71,20 +56,7 @@ function CreateRoom (props) {
           labelAlign="left"
         >
           <Form.Item
-            label="Title Room"
-            name="name"
-            rules={rules}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Description"
-            name="desc"
-          >
-            <Input.TextArea />
-          </Form.Item>
-          <Form.Item
-            label="Members"
+            wrapperCol={{ span: 24 }}
             name="members"
           >
             <Select
@@ -93,8 +65,9 @@ function CreateRoom (props) {
               placeholder="Add members"
               optionFilterProp="children"
             >
-              {users.map((item) => (
-                <Option key={item.id} value={item.uid}>
+              {membersInvite.length > 0 ? (
+                membersInvite.map((item) => (
+                  <Option key={item.id} value={item.uid}>
                     <Avatar 
                       size="small" 
                       src={item.photoURL}
@@ -105,18 +78,21 @@ function CreateRoom (props) {
                     >
                       {item.photoURL ? '' : item.displayName?.charAt(0)?.toUpperCase()}
                     </Avatar>
-                  {item.displayName}
-                </Option>
-              ))}
+                    {item.displayName}
+                  </Option>
+                ))
+              ) : (
+                <Option disabled>All members are already in the group!</Option>
+              )} 
             </Select>
           </Form.Item>
           <Form.Item wrapperCol={{ span: 24 }} style={{ textAlign: 'center' }}>
             <Button 
               size="large" 
               htmlType="submit"
-              className="button__create-room"
+              className="button__invite-members"
             >
-              Create
+              Invite
             </Button>
           </Form.Item>
         </Form>
@@ -125,4 +101,4 @@ function CreateRoom (props) {
   )
 }
 
-export default CreateRoom;
+export default InviteMembers;

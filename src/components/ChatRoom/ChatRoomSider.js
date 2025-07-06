@@ -77,7 +77,7 @@ function ChatRoomSider (props) {
           </Flex>
         </Header>
         <Flex 
-          style={{ height: 'calc(100vh - 64px)' }}
+          style={{ height: 'calc(100vh - 64px - 25px)' }}
           justify="space-between" 
           vertical 
         >

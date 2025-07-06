@@ -47,11 +47,22 @@ function AppProvider ({ children }) {
   }, [selectedRoom?.members]);
 
   const members = useFirestore("users", membersCondition);
+
+  const membersInviteCondition = useMemo(() => {
+    if (!selectedRoom?.members || selectedRoom.members.length === 0) return null;
+    return {
+      fieldName: 'uid',
+      operator: "not-in",
+      compareValue: selectedRoom.members
+    };
+  }, [selectedRoom?.members]);
+
+  const membersInvite = useFirestore("users", membersInviteCondition);
   
   return (
     <>
       <AppContext.Provider 
-        value={{rooms, selectedRoomId, setSelectedRoomId, selectedRoom, members}}
+        value={{rooms, selectedRoomId, setSelectedRoomId, selectedRoom, members, membersInvite}}
       >
         {children}
       </AppContext.Provider>
