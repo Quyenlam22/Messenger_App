@@ -10,8 +10,6 @@ function InviteMembers (props) {
   const {isModalOpen, setIsModalOpen} = props;
   const {selectedRoomId, selectedRoom, membersInvite} = useContext(AppContext);
 
-  console.log(selectedRoom);
-  
   const [ form ] = Form.useForm();
 
   const handleCancel = () => {

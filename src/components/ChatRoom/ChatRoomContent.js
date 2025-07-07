@@ -6,31 +6,27 @@ import { useContext, useState } from "react";
 import { AppContext } from "../../Context/AppProvider";
 import { AuthContext } from "../../Context/AuthProvider";
 import CreateRoom from "./CreateRoom";
-// import { useContext } from "react";
-// import { AuthContext } from "../../Context/AuthProvider";
+import { addDocument } from "../../firebase/services";
 
 function ChatRoomContent (props) {
   const { borderRadiusLG, colorBgContainer } = props;
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form] = Form.useForm();
 
   const user = useContext(AuthContext);
-
-  // users.forEach(item => {
-  //   const date = new Date(Number(item.createdAt)).toLocaleDateString('vi-VN', {
-  //     day: '2-digit',
-  //     month: '2-digit',
-  //     year: 'numeric',
-  //     hour: '2-digit',
-  //     minute: '2-digit',
-  //     // second: '2-digit',
-  //     // hour12: false // AM/PM
-  //   });
-  // })  
   
   const {selectedRoom} = useContext(AppContext);
   
-  const onFinish = values => {
-    console.log('Success:', values);
+  const onFinish = async (values) => {
+    await addDocument('messages', {
+      text: values.message,
+      uid: user.uid,
+      photoURL: user.photoURL,
+      roomId: selectedRoom.id,
+      displayName: user.displayName,
+      createdAt: Date.now()
+    });
+    form.resetFields();
   };
   const onFinishFailed = errorInfo => {
     console.log('Failed:', errorInfo);
@@ -54,6 +50,7 @@ function ChatRoomContent (props) {
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
+            form={form}
           >
             <Flex justify="flex-end" vertical={false} gap={4}>
               <Form.Item

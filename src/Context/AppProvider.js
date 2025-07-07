@@ -59,10 +59,21 @@ function AppProvider ({ children }) {
 
   const membersInvite = useFirestore("users", membersInviteCondition);
   
+  const messagesCondition = useMemo(() => {
+    if (!selectedRoom || !selectedRoom?.id) return null;
+    return {
+      fieldName: 'roomId',
+      operator: '==',
+      compareValue: selectedRoom.id
+    };
+  }, [selectedRoom]);
+
+  const messages = useFirestore("messages", messagesCondition);
+
   return (
     <>
       <AppContext.Provider 
-        value={{rooms, selectedRoomId, setSelectedRoomId, selectedRoom, members, membersInvite}}
+        value={{rooms, selectedRoomId, setSelectedRoomId, selectedRoom, members, membersInvite, messages}}
       >
         {children}
       </AppContext.Provider>
