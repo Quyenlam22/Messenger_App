@@ -1,13 +1,15 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
 import { auth } from "../firebase/config";
-import { useNavigate } from "react-router-dom";
-import { Spin } from "antd";
+import { useLocation, useNavigate } from "react-router-dom";
+import { message, Spin } from "antd";
 
 export const AuthContext = createContext();
 
 function AuthProvider ({ children }) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [messageApi, contextHolder] = message.useMessage();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -26,16 +28,32 @@ function AuthProvider ({ children }) {
       }
       else {
         setUser(null);
-        navigate("/login");
+        
+        const isManualLogout = sessionStorage.getItem("logout") === "true";
+        if (location.pathname === "/" && !isManualLogout) {
+          messageApi.open({
+            type: "warning",
+            content: "You must login to continue!",
+            duration: 1,
+          });
+          setTimeout(() => {
+            navigate("/login");
+          }, 1000);
+        } else {
+          navigate("/login");
+        }
+
+        sessionStorage.removeItem("logout");
       }
       setLoading(false);
     });
 
     return () => unsubscribe(); // cleanup listener when component unmount
-  }, [navigate]);
+  }, [navigate, location.pathname, messageApi]);
 
   return (
     <>
+      {contextHolder}
       <AuthContext.Provider value={user}>
         {loading ? <Spin/> : children}
       </AuthContext.Provider>

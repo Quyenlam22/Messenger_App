@@ -23,7 +23,7 @@ function Message() {
     <div className="message" ref={messageContainerRef}> 
       {messages && messages.map(message => (
         (message.uid === user.uid) ? (
-          <div className="message__box message__box--me">
+          <div key={message.id} className="message__box message__box--me">
             <p className="message__content message__content--me">{message.text}</p>
           </div>
         ) : (

@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Avatar, Button, Flex, Menu } from "antd";
+import { Avatar, Button, Flex, Menu, message } from "antd";
 import { Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import { LogoutOutlined, PlusCircleOutlined, WechatOutlined } from "@ant-design/icons";
@@ -11,6 +11,7 @@ import CreateRoom from "./CreateRoom";
 
 function ChatRoomSider (props) { 
   const user = useContext(AuthContext);
+  const [messageApi, contextHolder] = message.useMessage();
   const { colorBgContainer, collapsed, setCollapsed } = props;
 
   const {rooms, setSelectedRoomId} = useContext(AppContext);
@@ -34,22 +35,24 @@ function ChatRoomSider (props) {
             onClick: () => setSelectedRoomId(room.id)
           }
         })
-    },
-    {
-      key: 'add-room-chat',
-      icon: <PlusCircleOutlined />,
-      label: 'Add Room Chat',
-      title: null,
-      onClick: () => showModal()
     }
   ]
 
   const handleLogout = () => {
-    signOut(auth);
+    messageApi.open({
+      type: 'success',
+      duration: 0.5,
+      content: 'Logout successfully!',
+    });
+    setTimeout(() => {
+      sessionStorage.setItem("logout", "true");
+      signOut(auth);
+    }, 500);
   }
 
   return (
     <>
+      {contextHolder}
       <Sider 
         theme="light" 
         trigger={null} 
@@ -81,13 +84,23 @@ function ChatRoomSider (props) {
           justify="space-between" 
           vertical 
         >
-          <Menu
-            className="menu"
-            mode="inline"
-            defaultSelectedKeys={['list-room-chat']}
-            defaultOpenKeys={['list-room-chat']}
-            items={items}
-          />
+          <div style={{ overflowY: 'auto', flex: 1 }}>
+            <Menu
+              className="menu"
+              mode="inline"
+              defaultSelectedKeys={['list-room-chat']}
+              defaultOpenKeys={['list-room-chat']}
+              items={items}
+            />
+          </div>
+          <Button 
+            type="text"
+            icon={<PlusCircleOutlined />} 
+            onClick={showModal}
+            style={{width: '100%', justifyContent: 'center'}}
+          >
+            {!collapsed && "Add Room Chat"}
+          </Button>
           <CreateRoom isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
           <Button 
             className="button__logout"

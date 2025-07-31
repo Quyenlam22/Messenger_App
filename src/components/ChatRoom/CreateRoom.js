@@ -1,4 +1,4 @@
-import { Avatar, Button, Form, Input, Modal, Select } from "antd";
+import { Avatar, Button, Form, Input, message, Modal, Select } from "antd";
 import { useContext, useMemo } from "react";
 import { AuthContext } from "../../Context/AuthProvider";
 import useFirestore from "../../hooks/useFirestore";
@@ -15,6 +15,7 @@ const rules = [
 
 function CreateRoom (props) {
   const {isModalOpen, setIsModalOpen} = props;
+  const [messageApi, contextHolder] = message.useMessage();
   const user = useContext(AuthContext);
 
   const usersCondition = useMemo(() => {
@@ -46,14 +47,25 @@ function CreateRoom (props) {
     }
     await addDocument("rooms", dataRoom);
     form.resetFields();
+    messageApi.open({
+      type: 'success',
+      duration: 1.5,
+      content: 'Create room successfully!',
+    });
     setIsModalOpen(false);
   };
   const onFinishFailed = errorInfo => {
+    messageApi.open({
+      type: 'error',
+      duration: 1.5,
+      content: `Failed: ${errorInfo}`,
+    });
     console.log('Failed:', errorInfo);
   };
 
   return (
     <>
+      {contextHolder}
       <Modal
         title="Create Room"
         open={isModalOpen}

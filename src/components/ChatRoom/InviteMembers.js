@@ -1,4 +1,4 @@
-import { Avatar, Button, Form, Modal, Select } from "antd";
+import { Avatar, Button, Form, message, Modal, Select } from "antd";
 import { useContext } from "react";
 import { AppContext } from "../../Context/AppProvider";
 import { db } from "../../firebase/config";
@@ -8,6 +8,7 @@ const { Option } = Select;
 
 function InviteMembers (props) {
   const {isModalOpen, setIsModalOpen} = props;
+  const [messageApi, contextHolder] = message.useMessage();
   const {selectedRoomId, selectedRoom, membersInvite} = useContext(AppContext);
 
   const [ form ] = Form.useForm();
@@ -25,18 +26,33 @@ function InviteMembers (props) {
           members: [...selectedRoom.members, ...values.members]
         });
         form.resetFields();
+        messageApi.open({
+          type: 'success',
+          duration: 1.5,
+          content: 'Add members successfully!',
+        });
         setIsModalOpen(false);
       } catch (error) {
-        console.error("Update failed:", error);
+        messageApi.open({
+          type: 'error',
+          duration: 1.5,
+          content: `Add members failed: ${error}`,
+        });
       }
     }
   };
   const onFinishFailed = errorInfo => {
     console.log('Failed:', errorInfo);
+    messageApi.open({
+      type: 'error',
+      duration: 1.5,
+      content: `Failed: ${errorInfo}`,
+    });
   };
 
   return (
     <>
+      {contextHolder}
       <Modal
         title="Invite Members"
         open={isModalOpen}

@@ -1,6 +1,6 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Context/AuthProvider";
-import { Layout, theme } from "antd";
+import { Layout, message, theme } from "antd";
 import "./ChatRoom.scss";
 import ChatRoomSider from "../../components/ChatRoom/ChatRoomSider";
 import ChatRoomHeader from "../../components/ChatRoom/ChatRoomHeader";
@@ -13,11 +13,24 @@ function ChatRoom () {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  const [messageApi, contextHolder] = message.useMessage();
 
   useTitle('ChitChat');
 
+  useEffect(() => {
+    if (sessionStorage.getItem("loginSuccess") === "true") {
+      messageApi.open({
+        type: 'success',
+        duration: 1.5,
+        content: 'Login successfully!',
+      });
+      sessionStorage.removeItem("loginSuccess");
+    }
+  }, [messageApi]);
+
   return (
     <>
+      {contextHolder}
       {user && (
         <Layout className="chat-room">
           <ChatRoomSider 
