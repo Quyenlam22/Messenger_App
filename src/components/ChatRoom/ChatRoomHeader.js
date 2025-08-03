@@ -1,8 +1,9 @@
 import { Avatar, Button, Flex, Tooltip } from "antd";
-import { MenuFoldOutlined, MenuUnfoldOutlined, UserAddOutlined } from "@ant-design/icons";
+import { MenuFoldOutlined, MenuUnfoldOutlined, SettingOutlined, UserAddOutlined } from "@ant-design/icons";
 import { useContext, useState } from "react";
 import { AppContext } from "../../Context/AppProvider";
 import InviteMembers from "./InviteMembers";
+import ChatRoomSetting from "./ChatRoomSetting";
 
 function ChatRoomHeader (props) { 
   const { colorBgContainer, collapsed, setCollapsed } = props;
@@ -11,6 +12,11 @@ function ChatRoomHeader (props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
     setIsModalOpen(true);
+  };
+
+  const [modalSetting, setModalSetting] = useState(false);
+  const showModalSetting = () => {
+    setModalSetting(true);
   };
 
   return (
@@ -58,6 +64,14 @@ function ChatRoomHeader (props) {
                   </Tooltip>
                 ))}
               </Avatar.Group>
+              <Button
+                type="text"
+                size="large"
+                onClick={showModalSetting}
+              >
+                <SettingOutlined />
+              </Button>
+              <ChatRoomSetting modalSetting={modalSetting} setModalSetting={setModalSetting}/>
             </Flex>
           </Flex>
         ) : (

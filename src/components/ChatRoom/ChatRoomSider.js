@@ -46,6 +46,7 @@ function ChatRoomSider (props) {
     });
     setTimeout(() => {
       sessionStorage.setItem("logout", "true");
+      setSelectedRoomId(null);
       signOut(auth);
     }, 500);
   }

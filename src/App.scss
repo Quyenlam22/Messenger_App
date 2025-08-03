@@ -44,22 +44,51 @@
     border: none;
     transition: all 0.3s ease;
 
-    &:hover, &:focus {
-      background: linear-gradient(to left, #00c6ff, #0072ff)!important;
-      color: #fff!important;
+    &:hover,
+    &:focus {
+      background: linear-gradient(to left, #00c6ff, #0072ff) !important;
+      color: #fff !important;
+      filter: brightness(1.1);
+    }
+  }
+
+  &__edit-room {
+    background: linear-gradient(to right, #009130, #06e549);
+    color: #fff;
+    border: none;
+    transition: all 0.3s ease;
+
+    &:hover,
+    &:focus {
+      background: linear-gradient(to left, #009130, #06e549) !important;
+      color: #fff !important;
+      filter: brightness(1.1);
+    }
+  }
+
+  &__delete-room {
+    background: linear-gradient(to right, #a90000, #fe1c1c);
+    color: #fff;
+    border: none;
+    transition: all 0.3s ease;
+
+    &:hover,
+    &:focus {
+      background: linear-gradient(to left, #a90000, #fe1c1c) !important;
+      color: #fff !important;
       filter: brightness(1.1);
     }
   }
 
   &__invite-members {
-    background: linear-gradient(135deg, #667eea, #764ba2); 
+    background: linear-gradient(135deg, #667eea, #764ba2);
     color: #fff;
     border: none;
     transition: all 0.3s ease;
 
     &:hover {
-      background: linear-gradient(-135deg, #667eea, #764ba2)!important;
-      color: #fff!important;
+      background: linear-gradient(-135deg, #667eea, #764ba2) !important;
+      color: #fff !important;
       filter: brightness(1.1);
     }
   }
@@ -71,8 +100,8 @@
     transition: all 0.3s ease;
 
     &:hover {
-      background: linear-gradient(to left, #00c6ff, #0072ff)!important;
-      color: #fff!important;
+      background: linear-gradient(to left, #00c6ff, #0072ff) !important;
+      color: #fff !important;
       filter: brightness(1.1);
     }
   }

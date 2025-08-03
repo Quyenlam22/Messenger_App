@@ -43,6 +43,7 @@ function CreateRoom (props) {
         ...(values.members || []),
         user.uid
       ] ,
+      owner: user.uid,
       createdAt: Date.now()
     }
     await addDocument("rooms", dataRoom);
