@@ -1,12 +1,14 @@
 import { createContext, useContext, useMemo, useState } from "react";
 import useFirestore from "../hooks/useFirestore";
 import { AuthContext } from "./AuthProvider";
+import { message } from "antd";
 
 export const AppContext = createContext();
 
 function AppProvider ({ children }) {
   const user = useContext(AuthContext);
   const [selectedRoomId, setSelectedRoomId] = useState('');
+  const [messageApi, contextHolder] = message.useMessage();
 
   // useEffect(() => {
   //   const unsubscribe = onSnapshot(collection(db, "users"), (snapshot) => {
@@ -72,8 +74,20 @@ function AppProvider ({ children }) {
 
   return (
     <>
+      {contextHolder}
       <AppContext.Provider 
-        value={{rooms, selectedRoomId, setSelectedRoomId, selectedRoom, members, membersInvite, messages}}
+        value={
+          {
+            rooms, 
+            selectedRoomId, 
+            setSelectedRoomId, 
+            selectedRoom, 
+            members, 
+            membersInvite, 
+            messages,
+            messageApi
+          }
+        }
       >
         {children}
       </AppContext.Provider>

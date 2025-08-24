@@ -1,11 +1,12 @@
-import { Avatar, Button, Flex, Form, Input, message, Modal, Select } from "antd";
+import { Avatar, Button, Flex, Form, Input, Modal, Select } from "antd";
 import { useContext, useEffect, useMemo } from "react";
 import { AppContext } from "../../Context/AppProvider";
 import { db } from "../../firebase/config";
-import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { doc } from "firebase/firestore";
 import { AuthContext } from "../../Context/AuthProvider";
 import useFirestore from "../../hooks/useFirestore";
 import { ArrowRightOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { deleteDocument, editDocument } from "../../firebase/services";
 
 const { Option } = Select;
 
@@ -18,8 +19,7 @@ const rules = [
 
 function ChatRoomSetting (props) {
   const {modalSetting, setModalSetting} = props;
-  const [messageApi, contextHolder] = message.useMessage();
-  const {selectedRoomId, selectedRoom} = useContext(AppContext);
+  const {selectedRoomId, selectedRoom, messageApi} = useContext(AppContext);
   const user = useContext(AuthContext);
 
   const [ form ] = Form.useForm();
@@ -61,13 +61,16 @@ function ChatRoomSetting (props) {
     setModalSetting(false);
   };
 
-  const onFinish = async (values) => {
+  const onFinish = async (values) => {    
     try {
       const roomRef = doc(db, 'rooms', selectedRoomId);
-      await updateDoc(roomRef, {
+      await editDocument(roomRef, {
         name: values.name,
         desc: values.desc,
-        members: [...values.members]
+        members: [
+          ...values.members,
+          selectedRoom.owner
+        ]
       });
       // form.resetFields();
       messageApi.open({
@@ -75,7 +78,7 @@ function ChatRoomSetting (props) {
         duration: 1.5,
         content: 'Edit room successfully!',
       });
-      // setModalSetting(false);
+      setModalSetting(false);
     } catch (error) {
       messageApi.open({
         type: 'error',
@@ -94,17 +97,14 @@ function ChatRoomSetting (props) {
     });
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     try {
       messageApi.open({
         type: 'success',
-        duration: 0.5,
         content: 'Room deleted!',
       });
-      setTimeout(async () => {
-        await deleteDoc(doc(db, 'rooms', selectedRoomId));
-        setModalSetting(false);
-      }, 500);
+      await deleteDocument(doc(db, 'rooms', selectedRoomId));
+      setModalSetting(false);
     } catch (e) {
       messageApi.open({
         type: 'error',
@@ -126,7 +126,7 @@ function ChatRoomSetting (props) {
         
         const updatedMembers = selectedRoom.members.filter(uid => uid !== user.uid);
         
-        await updateDoc(roomRef, {
+        await editDocument(roomRef, {
           members: [...updatedMembers]
         });
         setModalSetting(false);
@@ -144,7 +144,6 @@ function ChatRoomSetting (props) {
 
   return (
     <>
-      {contextHolder}
       <Modal
         title="Settings Room"
         open={modalSetting}

@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Context/AuthProvider";
-import { Layout, message, theme } from "antd";
+import { Layout, theme } from "antd";
 import "./ChatRoom.scss";
 import ChatRoomSider from "../../components/ChatRoom/ChatRoomSider";
 import ChatRoomHeader from "../../components/ChatRoom/ChatRoomHeader";
 import ChatRoomContent from "../../components/ChatRoom/ChatRoomContent";
 import useTitle from "../../hooks/useTitle";
+import { AppContext } from "../../Context/AppProvider";
 
 function ChatRoom () {
   const user = useContext(AuthContext);
@@ -13,24 +14,27 @@ function ChatRoom () {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-  const [messageApi, contextHolder] = message.useMessage();
+  const { messageApi } = useContext(AppContext);
 
   useTitle('ChitChat');
-
+  
   useEffect(() => {
     if (sessionStorage.getItem("loginSuccess") === "true") {
       messageApi.open({
         type: 'success',
-        duration: 1.5,
         content: 'Login successfully!',
       });
-      sessionStorage.removeItem("loginSuccess");
+    }
+    else if(!sessionStorage.getItem("loginSuccess")) {
+      messageApi.open({
+        type: "warning",
+        content: "You must login to continue!",
+      });
     }
   }, [messageApi]);
 
   return (
     <>
-      {contextHolder}
       {user && (
         <Layout className="chat-room">
           <ChatRoomSider 

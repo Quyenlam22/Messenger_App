@@ -1,8 +1,9 @@
-import { Avatar, Button, Form, Input, message, Modal, Select } from "antd";
+import { Avatar, Button, Form, Input, Modal, Select } from "antd";
 import { useContext, useMemo } from "react";
 import { AuthContext } from "../../Context/AuthProvider";
 import useFirestore from "../../hooks/useFirestore";
 import { addDocument } from "../../firebase/services";
+import { AppContext } from "../../Context/AppProvider";
 
 const { Option } = Select;
 
@@ -15,7 +16,7 @@ const rules = [
 
 function CreateRoom (props) {
   const {isModalOpen, setIsModalOpen} = props;
-  const [messageApi, contextHolder] = message.useMessage();
+  const {messageApi} = useContext(AppContext);
   const user = useContext(AuthContext);
 
   const usersCondition = useMemo(() => {
@@ -66,7 +67,6 @@ function CreateRoom (props) {
 
   return (
     <>
-      {contextHolder}
       <Modal
         title="Create Room"
         open={isModalOpen}

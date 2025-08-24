@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Avatar, Button, Flex, Menu, message } from "antd";
+import { Avatar, Button, Flex, Menu } from "antd";
 import { Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import { LogoutOutlined, PlusCircleOutlined, WechatOutlined } from "@ant-design/icons";
@@ -11,7 +11,6 @@ import CreateRoom from "./CreateRoom";
 
 function ChatRoomSider (props) { 
   const user = useContext(AuthContext);
-  const [messageApi, contextHolder] = message.useMessage();
   const { colorBgContainer, collapsed, setCollapsed } = props;
 
   const {rooms, setSelectedRoomId} = useContext(AppContext);
@@ -39,21 +38,14 @@ function ChatRoomSider (props) {
   ]
 
   const handleLogout = () => {
-    messageApi.open({
-      type: 'success',
-      duration: 0.5,
-      content: 'Logout successfully!',
-    });
-    setTimeout(() => {
-      sessionStorage.setItem("logout", "true");
-      setSelectedRoomId(null);
-      signOut(auth);
-    }, 500);
+    sessionStorage.setItem("logout", "true");
+    sessionStorage.removeItem("loginSuccess");
+    setSelectedRoomId(null);
+    signOut(auth);
   }
 
   return (
     <>
-      {contextHolder}
       <Sider 
         theme="light" 
         trigger={null} 

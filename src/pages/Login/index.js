@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Flex } from 'antd';
 import './Login.scss';
 import { FacebookOutlined, GoogleOutlined } from '@ant-design/icons'
@@ -7,9 +7,23 @@ import { auth, fbProvider, googleProvider } from "../../firebase/config";
 import { AuthContext } from "../../Context/AuthProvider";
 import { addDocument } from "../../firebase/services";
 import useTitle from "../../hooks/useTitle";
+import { AppContext } from "../../Context/AppProvider";
 
 function Login () {
   const user = useContext(AuthContext);
+  const { messageApi } = useContext(AppContext);
+
+  const isLogout = sessionStorage.getItem("logout");
+
+  useEffect(() => {
+    if(isLogout === "true"){
+      messageApi.open({
+        type: 'success',
+        content: 'Logout successfully!',
+      });
+      sessionStorage.removeItem("logout");
+    }
+  })
   
   useTitle('Login');
 

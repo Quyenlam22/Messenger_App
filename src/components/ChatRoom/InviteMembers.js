@@ -1,15 +1,15 @@
-import { Avatar, Button, Form, message, Modal, Select } from "antd";
+import { Avatar, Button, Form, Modal, Select } from "antd";
 import { useContext } from "react";
 import { AppContext } from "../../Context/AppProvider";
 import { db } from "../../firebase/config";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc } from "firebase/firestore";
+import { editDocument } from "../../firebase/services";
 
 const { Option } = Select;
 
 function InviteMembers (props) {
   const {isModalOpen, setIsModalOpen} = props;
-  const [messageApi, contextHolder] = message.useMessage();
-  const {selectedRoomId, selectedRoom, membersInvite} = useContext(AppContext);
+  const {messageApi, selectedRoomId, selectedRoom, membersInvite} = useContext(AppContext);
 
   const [ form ] = Form.useForm();
 
@@ -22,7 +22,7 @@ function InviteMembers (props) {
     if (values && values.members?.length > 0) {
       try {
         const roomRef = doc(db, 'rooms', selectedRoomId);
-        await updateDoc(roomRef, {
+        await editDocument(roomRef, {
           members: [...selectedRoom.members, ...values.members]
         });
         form.resetFields();
@@ -52,7 +52,6 @@ function InviteMembers (props) {
 
   return (
     <>
-      {contextHolder}
       <Modal
         title="Invite Members"
         open={isModalOpen}
