@@ -11,7 +11,7 @@ function AuthProvider ({ children }) {
   const location = useLocation();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -23,12 +23,14 @@ function AuthProvider ({ children }) {
         // };
         const infoUser = user.providerData[0];
         setUser(infoUser);
-        navigate("/");
+        if(location.pathname === "/login") {
+          navigate("/");
+        }
       }
       else {
         setUser(null);
         
-        const isManualLogout = sessionStorage.getItem("loginSuccess") === "true";
+        const isManualLogout = localStorage.getItem("loginSuccess") === "true";
         if (location.pathname === "/" && !isManualLogout) {
           navigate("/login");
         }

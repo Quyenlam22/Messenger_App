@@ -1,13 +1,14 @@
 import { Avatar, Button, Flex, Tooltip } from "antd";
-import { MenuFoldOutlined, MenuUnfoldOutlined, SettingOutlined, UserAddOutlined } from "@ant-design/icons";
+import { LeftOutlined, MenuFoldOutlined, MenuUnfoldOutlined, SettingOutlined, UserAddOutlined } from "@ant-design/icons";
 import { useContext, useState } from "react";
 import { AppContext } from "../../Context/AppProvider";
 import InviteMembers from "./InviteMembers";
 import ChatRoomSetting from "./ChatRoomSetting";
+import SearchBar from "./SearchBar";
 
 function ChatRoomHeader (props) { 
   const { colorBgContainer, collapsed, setCollapsed } = props;
-  const {selectedRoom, members} = useContext(AppContext);
+  const {selectedRoom, members, setSelectedRoomId} = useContext(AppContext);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
@@ -20,7 +21,7 @@ function ChatRoomHeader (props) {
   };
 
   return (
-    <>
+    <div className="header">
       {
         selectedRoom ? (
           <Flex 
@@ -38,8 +39,15 @@ function ChatRoomHeader (props) {
               <Button
                 type="text"
                 size="large"
+                className="res-des"
                 icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 onClick={() => setCollapsed(!collapsed)}
+              />
+              <Button
+                type="text"
+                size="large"
+                icon={<LeftOutlined />}
+                onClick={() => setSelectedRoomId("")}
               />
               <div className="info-room">
                 <p className="info-room__title">{selectedRoom.name}</p>
@@ -80,23 +88,26 @@ function ChatRoomHeader (props) {
               style={{ 
                 height: 64,
                 padding: "0 15px 0 15px", 
-                background: colorBgContainer ,
+                background: colorBgContainer,
+                overflow: "hidden"
               }}
               align="center" 
               vertical={false} 
-              justify="space-between"
+              gap={4}
             >
               <Button
                 type="text"
                 size="large"
+                className="res-des"
                 icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 onClick={() => setCollapsed(!collapsed)}
               />
+              <SearchBar/>
             </Flex>
           </>
         )
       }
-    </>
+    </div>
   )
 }
 

@@ -5,8 +5,9 @@ import Message from "./Message";
 import { useContext, useState } from "react";
 import { AppContext } from "../../Context/AppProvider";
 import { AuthContext } from "../../Context/AuthProvider";
-import CreateRoom from "./CreateRoom";
 import { addDocument } from "../../firebase/services";
+import Welcome from "./Welcome";
+import WelcomeMobile from "./WelcomeMobile";
 
 function ChatRoomContent (props) {
   const { borderRadiusLG, colorBgContainer } = props;
@@ -66,23 +67,13 @@ function ChatRoomContent (props) {
           </Form>
         </Content>
       ) : (
-        <Flex className="welcome" vertical justify="center" align="center">
-          <h1 className="welcome__title">Welcome {user.displayName} 👋</h1>
-          <Flex justify="center" align="center" vertical>
-            <p className="welcome__content">Choose a chat group to start chatting with people!</p>
-            <p className="welcome__content-create-room">You can create a new group if you don't have one yet.</p>
-            <Button 
-              className="button__welcome" 
-              size="large" 
-              onClick={() => {
-                setIsModalOpen(true)
-              }} 
-            >
-              Create Room Chat
-            </Button>
-            <CreateRoom isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
-          </Flex>
-        </Flex>
+        <>
+          <Welcome
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+          />
+          <WelcomeMobile/>
+        </>  
       )}
     </>
   )

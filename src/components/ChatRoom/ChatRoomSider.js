@@ -38,8 +38,8 @@ function ChatRoomSider (props) {
   ]
 
   const handleLogout = () => {
-    sessionStorage.setItem("logout", "true");
-    sessionStorage.removeItem("loginSuccess");
+    localStorage.setItem("logout", "true");
+    localStorage.removeItem("loginSuccess");
     setSelectedRoomId(null);
     signOut(auth);
   }
@@ -77,7 +77,10 @@ function ChatRoomSider (props) {
           justify="space-between" 
           vertical 
         >
-          <div style={{ overflowY: 'auto', flex: 1 }}>
+          <div 
+            style={{ overflowY: 'auto', flex: 1 }}
+            className="res-des"
+          >
             <Menu
               className="menu"
               mode="inline"

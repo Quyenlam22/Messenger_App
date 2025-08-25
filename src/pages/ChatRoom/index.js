@@ -19,13 +19,16 @@ function ChatRoom () {
   useTitle('ChitChat');
   
   useEffect(() => {
-    if (sessionStorage.getItem("loginSuccess") === "true") {
-      messageApi.open({
-        type: 'success',
-        content: 'Login successfully!',
-      });
+    if (localStorage.getItem("loginSuccess") === "true") {
+      if(localStorage.getItem("isLogin") === "true"){
+        messageApi.open({
+          type: 'success',
+          content: 'Login successfully!',
+        });
+        localStorage.removeItem("isLogin");
+      }
     }
-    else if(!sessionStorage.getItem("loginSuccess")) {
+    else if(!localStorage.getItem("loginSuccess")) {
       messageApi.open({
         type: "warning",
         content: "You must login to continue!",

@@ -13,7 +13,7 @@ function Login () {
   const user = useContext(AuthContext);
   const { messageApi } = useContext(AppContext);
 
-  const isLogout = sessionStorage.getItem("logout");
+  const isLogout = localStorage.getItem("logout");
 
   useEffect(() => {
     if(isLogout === "true"){
@@ -21,7 +21,7 @@ function Login () {
         type: 'success',
         content: 'Logout successfully!',
       });
-      sessionStorage.removeItem("logout");
+      localStorage.removeItem("logout");
     }
   })
   
@@ -30,7 +30,8 @@ function Login () {
   const handleFBLogin = async () => {
     try {
       const result = await signInWithPopup(auth, fbProvider);
-      sessionStorage.setItem("loginSuccess", "true");
+      localStorage.setItem("loginSuccess", "true");
+      localStorage.setItem("isLogin", "true");
 
       if (result.user.metadata.creationTime === result.user.metadata.lastSignInTime) {
         await addDocument("users", {
@@ -46,7 +47,8 @@ function Login () {
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      sessionStorage.setItem("loginSuccess", "true");
+      localStorage.setItem("loginSuccess", "true");
+      localStorage.setItem("isLogin", "true");
 
       if (result.user.metadata.creationTime === result.user.metadata.lastSignInTime) {
         await addDocument("users", {
