@@ -1,6 +1,6 @@
 import { Avatar, Button, Flex, Tooltip } from "antd";
 import { LeftOutlined, MenuFoldOutlined, MenuUnfoldOutlined, SettingOutlined, UserAddOutlined } from "@ant-design/icons";
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { AppContext } from "../../Context/AppProvider";
 import InviteMembers from "./InviteMembers";
 import ChatRoomSetting from "./ChatRoomSetting";
@@ -8,7 +8,16 @@ import SearchBar from "./SearchBar";
 
 function ChatRoomHeader (props) { 
   const { colorBgContainer, collapsed, setCollapsed } = props;
-  const {selectedRoom, members, setSelectedRoomId} = useContext(AppContext);
+  const {selectedRoom, members, setSelectedRoomId, rooms} = useContext(AppContext);
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+   const filteredRooms = useMemo(() => {
+    if (!searchTerm) return [];
+    return rooms.filter(room =>
+      room.name && room.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [rooms, searchTerm]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
@@ -102,11 +111,25 @@ function ChatRoomHeader (props) {
                 icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 onClick={() => setCollapsed(!collapsed)}
               />
-              <SearchBar/>
+              <SearchBar onSearch={(keyword) => setSearchTerm(keyword)}/>
             </Flex>
           </>
         )
       }
+
+      {(!selectedRoom && filteredRooms.length > 0) && (
+        <div className="search__rooms">
+          {filteredRooms.map(room => (
+            <div 
+              key={room.id} 
+              className="search__room-item"
+              onClick={() => setSelectedRoomId(room.id)}
+            >
+              {room.name}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

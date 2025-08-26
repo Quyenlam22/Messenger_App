@@ -3,7 +3,7 @@
 }
 
 .header {
-  display: fixed;
+  position: sticky;
 }
 
 .res-des {
@@ -98,6 +98,31 @@
 
   &__icon {
     color: #9ca3af;
+  }
+
+  &__rooms {
+    position: absolute;
+    top: 3.75rem;
+    left: 52%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 32rem;
+    min-width: 200px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 1rem;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+  }
+
+  &__room-item {
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+
+  &__room-item:hover {
+    background-color: #f5f5f5;
   }
 }
 

@@ -30,7 +30,7 @@ function Login () {
   const handleFBLogin = async () => {
     try {
       const result = await signInWithPopup(auth, fbProvider);
-      localStorage.setItem("loginSuccess", "true");
+      // localStorage.setItem("loginSuccess", "true");
       localStorage.setItem("isLogin", "true");
 
       if (result.user.metadata.creationTime === result.user.metadata.lastSignInTime) {
@@ -47,7 +47,7 @@ function Login () {
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      localStorage.setItem("loginSuccess", "true");
+      // localStorage.setItem("loginSuccess", "true");
       localStorage.setItem("isLogin", "true");
 
       if (result.user.metadata.creationTime === result.user.metadata.lastSignInTime) {

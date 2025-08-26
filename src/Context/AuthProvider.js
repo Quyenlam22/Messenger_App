@@ -21,6 +21,8 @@ function AuthProvider ({ children }) {
         //   uid: user.uid,
         //   photoURL: user.photoURL
         // };
+
+        localStorage.setItem("accessToken", user.stsTokenManager.accessToken);
         const infoUser = user.providerData[0];
         setUser(infoUser);
         if(location.pathname === "/login") {
@@ -30,8 +32,8 @@ function AuthProvider ({ children }) {
       else {
         setUser(null);
         
-        const isManualLogout = localStorage.getItem("loginSuccess") === "true";
-        if (location.pathname === "/" && !isManualLogout) {
+        // const isManualLogout = localStorage.getItem("accessToken") === "true";
+        if (location.pathname === "/") {
           navigate("/login");
         }
 

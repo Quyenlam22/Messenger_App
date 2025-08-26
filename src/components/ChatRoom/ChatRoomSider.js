@@ -39,7 +39,7 @@ function ChatRoomSider (props) {
 
   const handleLogout = () => {
     localStorage.setItem("logout", "true");
-    localStorage.removeItem("loginSuccess");
+    localStorage.removeItem("accessToken");
     setSelectedRoomId(null);
     signOut(auth);
   }
@@ -82,7 +82,7 @@ function ChatRoomSider (props) {
             className="res-des"
           >
             <Menu
-              className="menu"
+              style={{width: '100%', justifyContent: 'center'}}
               mode="inline"
               defaultSelectedKeys={['list-room-chat']}
               defaultOpenKeys={['list-room-chat']}

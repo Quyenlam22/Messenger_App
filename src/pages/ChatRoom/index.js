@@ -19,7 +19,7 @@ function ChatRoom () {
   useTitle('ChitChat');
   
   useEffect(() => {
-    if (localStorage.getItem("loginSuccess") === "true") {
+    if (localStorage.getItem("accessToken")) {
       if(localStorage.getItem("isLogin") === "true"){
         messageApi.open({
           type: 'success',
@@ -28,13 +28,13 @@ function ChatRoom () {
         localStorage.removeItem("isLogin");
       }
     }
-    else if(!localStorage.getItem("loginSuccess")) {
+    else if(!localStorage.getItem("accessToken") && !user) {
       messageApi.open({
         type: "warning",
         content: "You must login to continue!",
       });
     }
-  }, [messageApi]);
+  }, [messageApi, user]);
 
   return (
     <>
