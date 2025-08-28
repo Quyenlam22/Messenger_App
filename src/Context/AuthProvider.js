@@ -1,8 +1,9 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
-import { auth } from "../firebase/config";
+import { auth, db } from "../firebase/config";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Spin } from "antd";
+import { collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 
 export const AuthContext = createContext();
 
@@ -13,7 +14,7 @@ function AuthProvider ({ children }) {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         // const infoUser = {
         //   displayName: user.displayName,
@@ -23,8 +24,29 @@ function AuthProvider ({ children }) {
         // };
 
         localStorage.setItem("accessToken", user.stsTokenManager.accessToken);
-        const infoUser = user.providerData[0];
-        setUser(infoUser);
+
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("email", "==", user.email));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const userDoc = querySnapshot.docs[0];
+          const dbUser = { id: userDoc.id, ...userDoc.data() };
+
+          if (dbUser.state === "offline") {
+            await updateDoc(doc(db, "users", dbUser.id), {
+              state: "online",
+              last_changed: Date.now(),
+            });
+            dbUser.state = "online";
+          }
+
+          setUser(dbUser);
+        } else {
+          const infoUser = user.providerData[0];
+          setUser(infoUser);
+        }
+
         if(location.pathname === "/login") {
           navigate("/");
         }
@@ -33,7 +55,7 @@ function AuthProvider ({ children }) {
         setUser(null);
         
         // const isManualLogout = localStorage.getItem("accessToken") === "true";
-        if (location.pathname === "/") {
+        if (location.pathname !== "/login") {
           navigate("/login");
         }
 

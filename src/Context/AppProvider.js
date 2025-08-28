@@ -72,6 +72,17 @@ function AppProvider ({ children }) {
 
   const messages = useFirestore("messages", messagesCondition);
 
+  const friendsCondition = useMemo(() => {
+    if (!user?.uid) return null;
+    return {
+      fieldName: "uid",
+      operator: "!=",
+      compareValue: user.uid
+    };
+  }, [user?.uid])
+
+  const friends = useFirestore("users", friendsCondition || {});
+
   return (
     <>
       {contextHolder}
@@ -85,7 +96,8 @@ function AppProvider ({ children }) {
             members, 
             membersInvite, 
             messages,
-            messageApi
+            messageApi,
+            friends
           }
         }
       >

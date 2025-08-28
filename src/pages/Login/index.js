@@ -8,6 +8,7 @@ import { AuthContext } from "../../Context/AuthProvider";
 import { addDocument } from "../../firebase/services";
 import useTitle from "../../hooks/useTitle";
 import { AppContext } from "../../Context/AppProvider";
+import { serverTimestamp } from "firebase/firestore";
 
 function Login () {
   const user = useContext(AuthContext);
@@ -25,41 +26,28 @@ function Login () {
     }
   })
   
-  useTitle('Login');
-
-  const handleFBLogin = async () => {
+  useTitle('Login'); 
+  const handleLogin = async (provider) => {
     try {
-      const result = await signInWithPopup(auth, fbProvider);
-      // localStorage.setItem("loginSuccess", "true");
+      const result = await signInWithPopup(auth, provider);
       localStorage.setItem("isLogin", "true");
 
       if (result.user.metadata.creationTime === result.user.metadata.lastSignInTime) {
         await addDocument("users", {
           ...result.user.providerData[0],
-          ...result.user.metadata
+          ...result.user.metadata,
+          state: "online",
+          lastSeen: serverTimestamp(),
         });
       }
     } catch (error) {
-      console.error("FB Login error:", error);
-    }
-  }
-
-  const handleGoogleLogin = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      // localStorage.setItem("loginSuccess", "true");
-      localStorage.setItem("isLogin", "true");
-
-      if (result.user.metadata.creationTime === result.user.metadata.lastSignInTime) {
-        await addDocument("users", {
-          ...result.user.providerData[0],
-          ...result.user.metadata
-        });
-      }
-    } catch (error) {
-      console.error("Google Login error:", error);
+      console.error(`${provider.providerId} Login error:`, error);
     }
   };
+
+  const handleFBLogin = () => handleLogin(fbProvider);
+  const handleGoogleLogin = () => handleLogin(googleProvider);
+
 
   return (
     <>

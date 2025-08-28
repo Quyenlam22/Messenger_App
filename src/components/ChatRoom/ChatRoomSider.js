@@ -2,16 +2,20 @@ import { useContext, useState } from "react";
 import { Avatar, Button, Flex, Menu } from "antd";
 import { Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
-import { LogoutOutlined, PlusCircleOutlined, WechatOutlined } from "@ant-design/icons";
+import { HomeOutlined, LogoutOutlined, PlusCircleOutlined, UserOutlined, WechatOutlined } from "@ant-design/icons";
 import { AuthContext } from "../../Context/AuthProvider";
 import { signOut } from "firebase/auth";
-import { auth } from "../../firebase/config";
+import { auth, db } from "../../firebase/config";
 import { AppContext } from "../../Context/AppProvider";
 import CreateRoom from "./CreateRoom";
+import { useNavigate } from "react-router-dom";
+import { doc, serverTimestamp } from "firebase/firestore";
+import { editDocument } from "../../firebase/services";
 
 function ChatRoomSider (props) { 
   const user = useContext(AuthContext);
   const { colorBgContainer, collapsed, setCollapsed } = props;
+  const navigate = useNavigate();
 
   const {rooms, setSelectedRoomId} = useContext(AppContext);
 
@@ -37,11 +41,22 @@ function ChatRoomSider (props) {
     }
   ]
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const userRef = doc(db, 'users', user.id);
+    await editDocument(userRef, {
+      state: "offline",
+      lastSeen: serverTimestamp(),
+    })
+    
     localStorage.setItem("logout", "true");
     localStorage.removeItem("accessToken");
     setSelectedRoomId(null);
-    signOut(auth);
+    await signOut(auth);
+  }
+
+  const handleHomePage = () => {
+    navigate("/");
+    setSelectedRoomId("");
   }
 
   return (
@@ -77,6 +92,14 @@ function ChatRoomSider (props) {
           justify="space-between" 
           vertical 
         >
+          <Button 
+            type="text"
+            icon={<HomeOutlined />} 
+            style={{width: '100%', justifyContent: 'center'}}
+            onClick={handleHomePage}
+          >
+            {!collapsed && "Home"}
+          </Button>
           <div 
             style={{ overflowY: 'auto', flex: 1 }}
             className="res-des"
@@ -98,6 +121,14 @@ function ChatRoomSider (props) {
             {!collapsed && "Add Room Chat"}
           </Button>
           <CreateRoom isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+          <Button 
+            type="text"
+            icon={<UserOutlined />} 
+            onClick={() => navigate("/users")}
+            style={{width: '100%', justifyContent: 'center'}}
+          >
+            {!collapsed && "Users"}
+          </Button>
           <Button 
             className="button__logout"
             size="large"

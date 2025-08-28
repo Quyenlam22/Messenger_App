@@ -1,0 +1,60 @@
+.user-list {
+  height: 100%;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 8px;
+  padding: 1rem;
+
+  &__item {
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+      background: #f5f5f5;
+    }
+  }
+
+  &__avatar {
+    position: relative;
+
+    .ant-badge-dot {
+      width: 10px;
+      height: 10px;
+      border: 2px solid #fff;
+      bottom: 4px;
+      right: 4px;
+    }
+  }
+
+  &__name {
+    font-weight: 500;
+    color: #111;
+  }
+
+  &__status {
+    font-size: 12px;
+    color: #999;
+
+    &.online {
+      color: #4caf50;
+    }
+    &.offline {
+      color: #aaa;
+    }
+  }
+
+  &__box {
+    border: 1px solid gray;
+    border-radius: 0.75rem;
+    overflow: hidden;
+  }
+
+  &__content{
+    margin: -0.75rem 0 0.5rem 0.5rem;
+  }
+}
+
+// Override Ant Design Css
+.ant-badge {
+  width: 100%;
+}
