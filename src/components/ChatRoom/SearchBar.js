@@ -34,7 +34,7 @@ function SearchBar({ onSearch }) {
       <div className="search__container">
         <Input
           size="large"
-          placeholder="Search group..."
+          placeholder="Search ..."
           prefix={<SearchOutlined className="search__icon" />}
           className="search__input"
           value={value}

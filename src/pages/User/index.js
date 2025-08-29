@@ -1,12 +1,12 @@
 import { Avatar, List, Badge, Carousel, Image, Button, Col, Row } from "antd";
 import "./User.scss";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AppContext } from "../../Context/AppProvider";
 import { MessageOutlined } from "@ant-design/icons";
 import useWindowSize from "../../hooks/useWindowSize";
 import { AuthContext } from "../../Context/AuthProvider";
 import { useNavigate } from "react-router-dom";
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { db } from "../../firebase/config";
 
 function sliceArray(arr, size) {
@@ -18,11 +18,17 @@ function sliceArray(arr, size) {
 }
 
 function User() {
-  const { friends, setSelectedRoomId } = useContext(AppContext);
+  const { friends, selectedRoomId, setSelectedRoomId } = useContext(AppContext);
   const user = useContext(AuthContext);
   const navigate = useNavigate();
 
   const { width } = useWindowSize();
+
+  useEffect(() => {
+    if(selectedRoomId) {
+      setSelectedRoomId("");
+    }
+  }, [selectedRoomId, setSelectedRoomId])
 
   let userSlice = [];
 
@@ -42,10 +48,16 @@ function User() {
   }
 
   const handleCreateRoom = async (values) => {
-    const newRoomRef = doc(collection(db, "rooms")); 
-    const dataRoom = { 
-      id: newRoomRef.id,
-      name: `${values.displayName} & ${user.displayName}`,
+    const roomRef = collection(db, "rooms");
+    const q = query(roomRef, where("name", "==", `${values.displayName} & ${user.displayName}`));
+
+    const roomExist = await getDocs(q);
+
+    if(roomExist.empty){
+      const newRoomRef = doc(collection(db, "rooms")); 
+      const dataRoom = { 
+        id: newRoomRef.id,
+        name: `${values.displayName} & ${user.displayName}`,
         desc: '',
         members: [values.uid, user.uid],
         owner: user.uid,
@@ -53,10 +65,13 @@ function User() {
       };
 
       await setDoc(newRoomRef, dataRoom); 
-
       setSelectedRoomId(newRoomRef.id); 
-      console.log("Created room:", newRoomRef.id);
-      navigate("/");
+    }
+    else {
+      setSelectedRoomId(roomExist.docs[0].id);
+    }
+    
+    navigate("/");
   }
 
   return (

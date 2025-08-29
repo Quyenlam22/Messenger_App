@@ -8,7 +8,7 @@ import { signOut } from "firebase/auth";
 import { auth, db } from "../../firebase/config";
 import { AppContext } from "../../Context/AppProvider";
 import CreateRoom from "./CreateRoom";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { doc, serverTimestamp } from "firebase/firestore";
 import { editDocument } from "../../firebase/services";
 
@@ -16,6 +16,7 @@ function ChatRoomSider (props) {
   const user = useContext(AuthContext);
   const { colorBgContainer, collapsed, setCollapsed } = props;
   const navigate = useNavigate();
+  const location = useLocation();
 
   const {rooms, setSelectedRoomId} = useContext(AppContext);
 
@@ -35,7 +36,12 @@ function ChatRoomSider (props) {
           return {
             key: room.id,
             label: room.name,
-            onClick: () => setSelectedRoomId(room.id)
+            onClick: () => {
+              setSelectedRoomId(room.id);
+              if(location.pathname !== "/"){
+                navigate("/");
+              }
+            }
           }
         })
     }
@@ -90,12 +96,19 @@ function ChatRoomSider (props) {
         <Flex 
           style={{ height: 'calc(100vh - 64px - 25px)' }}
           justify="space-between" 
+          align="left"
           vertical 
         >
           <Button 
             type="text"
             icon={<HomeOutlined />} 
-            style={{width: '100%', justifyContent: 'center'}}
+            style={
+              {
+                width: '100%', 
+                justifyContent: collapsed ? 'center' : 'flex-start',
+                paddingLeft: !collapsed ? "24px" : 0
+              }
+            }
             onClick={handleHomePage}
           >
             {!collapsed && "Home"}
@@ -105,41 +118,67 @@ function ChatRoomSider (props) {
             className="res-des"
           >
             <Menu
-              style={{width: '100%', justifyContent: 'center'}}
+              style={
+                {
+                  width: '100%', 
+                  justifyContent: collapsed ? 'center' : 'flex-start'
+                }
+              }
               mode="inline"
               defaultSelectedKeys={['list-room-chat']}
               defaultOpenKeys={['list-room-chat']}
               items={items}
             />
           </div>
-          <Button 
-            type="text"
-            icon={<PlusCircleOutlined />} 
-            onClick={showModal}
-            style={{width: '100%', justifyContent: 'center'}}
-          >
-            {!collapsed && "Add Room Chat"}
-          </Button>
-          <CreateRoom isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
-          <Button 
-            type="text"
-            icon={<UserOutlined />} 
-            onClick={() => navigate("/users")}
-            style={{width: '100%', justifyContent: 'center'}}
-          >
-            {!collapsed && "Users"}
-          </Button>
-          <Button 
-            className="button__logout"
-            size="large"
-            type="text"
-            onClick={handleLogout}
-          >
-            {collapsed ? 
-              <LogoutOutlined /> : 
-              <><LogoutOutlined /> Logout</>
-            }
-          </Button>
+          <div>
+            <Button 
+              type="text"
+              icon={<PlusCircleOutlined />} 
+              onClick={showModal}
+              style={
+                {
+                  width: '100%', 
+                  justifyContent: collapsed ? 'center' : 'flex-start',
+                  paddingLeft: !collapsed ? "24px" : 0
+                }
+              }
+            >
+              {!collapsed && "Add Room Chat"}
+            </Button>
+            <CreateRoom isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+            <Button 
+              type="text"
+              icon={<UserOutlined />} 
+              onClick={() => navigate("/users")}
+              style={
+                {
+                  width: '100%', 
+                  justifyContent: collapsed ? 'center' : 'flex-start',
+                  paddingLeft: !collapsed ? "24px" : 0
+                }
+              }
+            >
+              {!collapsed && "Users"}
+            </Button>
+            <Button 
+              className="button__logout"
+              size="large"
+              type="text"
+              onClick={handleLogout}
+              style={
+                {
+                  width: '100%', 
+                  justifyContent: collapsed ? 'center' : 'flex-start',
+                  paddingLeft: !collapsed ? "24px" : 0
+                }
+              }
+            >
+              {collapsed ? 
+                <LogoutOutlined /> : 
+                <><LogoutOutlined /> Logout</>
+              }
+            </Button>
+          </div>
         </Flex>
       </Sider>
     </>
