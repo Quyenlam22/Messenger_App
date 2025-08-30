@@ -1,20 +1,31 @@
 .button {
-  margin: 20px 0;
+  margin: 10px 0;
   cursor: pointer;
 
   &__facebook,
-  &__google {
+  &__google, 
+  &__auth {
     font-weight: 600;
     font-size: 18px;
     color: #fff;
     transition: all 0.5s ease;
     border: none;
-    padding: 20px;
-    border-radius: 8px;
+    padding: 5px;
+    border-radius: 4px;
 
     &:hover {
       filter: brightness(1.1);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &__auth {
+    padding: 10px 20px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+
+    &:hover {
+      background: linear-gradient(-135deg, #667eea, #764ba2);
     }
   }
 

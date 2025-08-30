@@ -16,12 +16,17 @@ function LayoutDefault () {
   
   useEffect(() => {
     const isLogin = localStorage.getItem("isLogin") === "true";
+    const isRegister = localStorage.getItem("isRegister") === "true";
     const isLogout = localStorage.getItem("logout") === "true";
 
     if (localStorage.getItem("accessToken") && isLogin) {
       messageApi.success("Login successfully!");
       localStorage.removeItem("isLogin");
     } 
+    else if (localStorage.getItem("accessToken") && isRegister) {
+      messageApi.success("Register successfully!");
+      localStorage.removeItem("isRegister");
+    }
     else if (!localStorage.getItem("accessToken") && !user && !isLogout) {
       messageApi.warning("You must login to continue!");
     }
