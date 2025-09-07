@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { Avatar, Button, Flex, Menu } from "antd";
 import { Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
-import { HomeOutlined, LogoutOutlined, PlusCircleOutlined, UserOutlined, WechatOutlined } from "@ant-design/icons";
+import { HomeOutlined, LogoutOutlined, OpenAIOutlined, PlusCircleOutlined, UserOutlined, WechatOutlined } from "@ant-design/icons";
 import { AuthContext } from "../../Context/AuthProvider";
 import { signOut } from "firebase/auth";
 import { auth, db } from "../../firebase/config";
@@ -10,7 +10,7 @@ import { AppContext } from "../../Context/AppProvider";
 import CreateRoom from "./CreateRoom";
 import { useLocation, useNavigate } from "react-router-dom";
 import { doc, serverTimestamp } from "firebase/firestore";
-import { editDocument } from "../../firebase/services";
+import { addDocument, editDocument } from "../../firebase/services";
 
 function ChatRoomSider (props) { 
   const user = useContext(AuthContext);
@@ -18,7 +18,7 @@ function ChatRoomSider (props) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const {rooms, setSelectedRoomId} = useContext(AppContext);
+  const {rooms, setSelectedRoomId, selectedRoomId, roomBots} = useContext(AppContext);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
@@ -27,6 +27,27 @@ function ChatRoomSider (props) {
   
   const items =
   [
+    {
+      key: 'bot-chat',
+      icon: <OpenAIOutlined />,
+      label: 'Chat Bot',
+      onClick: async () => {
+        if(roomBots.length > 0) {
+          setSelectedRoomId(roomBots[0].id);
+        }
+        else {
+          const dataRoom = { 
+            name: "AI",
+            owner: user.uid,
+            createdAt: Date.now(),
+            content: []
+          }
+          const roomRef = await addDocument("bots", dataRoom);
+          setSelectedRoomId(roomRef.id);
+        }
+        navigate("/chat-with-ai");
+      }
+    },
     {
       key: 'list-room-chat',
       icon: <WechatOutlined />,
@@ -106,7 +127,8 @@ function ChatRoomSider (props) {
               {
                 width: '100%', 
                 justifyContent: collapsed ? 'center' : 'flex-start',
-                paddingLeft: !collapsed ? "24px" : 0
+                paddingLeft: !collapsed ? "24px" : 0,
+                margin: !collapsed ? "4px" : 0
               }
             }
             onClick={handleHomePage}
@@ -125,7 +147,7 @@ function ChatRoomSider (props) {
                 }
               }
               mode="inline"
-              defaultSelectedKeys={['list-room-chat']}
+              selectedKeys={selectedRoomId ? [selectedRoomId] : []}
               defaultOpenKeys={['list-room-chat']}
               items={items}
             />
@@ -139,7 +161,8 @@ function ChatRoomSider (props) {
                 {
                   width: '100%', 
                   justifyContent: collapsed ? 'center' : 'flex-start',
-                  paddingLeft: !collapsed ? "24px" : 0
+                  paddingLeft: !collapsed ? "24px" : 0,
+                  margin: 4
                 }
               }
             >
@@ -154,7 +177,8 @@ function ChatRoomSider (props) {
                 {
                   width: '100%', 
                   justifyContent: collapsed ? 'center' : 'flex-start',
-                  paddingLeft: !collapsed ? "24px" : 0
+                  paddingLeft: !collapsed ? "24px" : 0,
+                  margin: 4
                 }
               }
             >
@@ -169,7 +193,8 @@ function ChatRoomSider (props) {
                 {
                   width: '100%', 
                   justifyContent: collapsed ? 'center' : 'flex-start',
-                  paddingLeft: !collapsed ? "24px" : 0
+                  paddingLeft: !collapsed ? "24px" : 0,
+                  margin: 4
                 }
               }
             >

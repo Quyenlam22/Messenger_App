@@ -130,6 +130,7 @@
   padding: 10px;
   height: calc(100% - 60px);
   overflow-y: auto;
+  background-color: #fff;
 
   &__box {
     padding-bottom: 5px;
@@ -235,5 +236,22 @@
     padding: 0 0.5rem 0.5rem;
     font-size: 0.875rem;
     margin-top: -0.5rem;
+  }
+}
+
+.emoji-picker {
+  position: relative;
+
+  &__container {
+    position: absolute;
+    bottom: 40px;
+    right: 0; 
+    z-index: 99;
+  }
+
+  @media (max-width: 575.98px) {
+    &__container {
+      right: -40px; 
+    }
   }
 }

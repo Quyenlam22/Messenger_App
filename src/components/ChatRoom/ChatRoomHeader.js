@@ -8,7 +8,7 @@ import SearchBar from "./SearchBar";
 
 function ChatRoomHeader (props) { 
   const { colorBgContainer, collapsed, setCollapsed } = props;
-  const {selectedRoom, members, setSelectedRoomId, rooms} = useContext(AppContext);
+  const {selectedRoom, selectedRoomBot, members, setSelectedRoomId, rooms} = useContext(AppContext);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -32,7 +32,7 @@ function ChatRoomHeader (props) {
   return (
     <div className="header">
       {
-        selectedRoom ? (
+        (selectedRoom || selectedRoomBot) ? (
           <Flex 
             style={{ 
               height: 64,
@@ -59,37 +59,40 @@ function ChatRoomHeader (props) {
                 onClick={() => setSelectedRoomId("")}
               />
               <div className="info-room">
-                <p className="info-room__title">{selectedRoom.name}</p>
-                <span className="info-room__desc">{selectedRoom.desc}</span>
+                <p className="info-room__title">{selectedRoom?.name || selectedRoomBot?.name}</p>
+                <span className="info-room__desc">{selectedRoom?.desc}</span>
               </div>  
             </Flex> 
-            <Flex align="center">
-              <Button 
-                type="text"
-                size="middle"
-                onClick={showModal}
-              >
-                <UserAddOutlined /> Invite
-              </Button>
-              <InviteMembers isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
-              <Avatar.Group max={{count: 2}}>
-                {members && members.map((member) => (
-                  <Tooltip placement="bottom" title={member.displayName} key={member.id}>
-                    <Avatar src={member.photoURL}>
-                      {member.photoURL ? '' : member.displayName?.charAt(0)?.toUpperCase()}
-                    </Avatar>
-                  </Tooltip>
-                ))}
-              </Avatar.Group>
-              <Button
-                type="text"
-                size="large"
-                onClick={showModalSetting}
-              >
-                <SettingOutlined />
-              </Button>
-              <ChatRoomSetting modalSetting={modalSetting} setModalSetting={setModalSetting}/>
-            </Flex>
+            {
+              selectedRoom &&
+              <Flex align="center">
+                <Button 
+                  type="text"
+                  size="middle"
+                  onClick={showModal}
+                >
+                  <UserAddOutlined /> Invite
+                </Button>
+                <InviteMembers isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>
+                <Avatar.Group max={{count: 2}}>
+                  {members && members.map((member) => (
+                    <Tooltip placement="bottom" title={member.displayName} key={member.id}>
+                      <Avatar src={member.photoURL}>
+                        {member.photoURL ? '' : member.displayName?.charAt(0)?.toUpperCase()}
+                      </Avatar>
+                    </Tooltip>
+                  ))}
+                </Avatar.Group>
+                <Button
+                  type="text"
+                  size="large"
+                  onClick={showModalSetting}
+                >
+                  <SettingOutlined />
+                </Button>
+                <ChatRoomSetting modalSetting={modalSetting} setModalSetting={setModalSetting}/>
+              </Flex>
+            }
           </Flex>
         ) : (
           <>

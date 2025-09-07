@@ -44,3 +44,8 @@ button {
 .ant-form-item {
   margin-bottom: 0.75rem;
 }
+
+/* Agent */
+.bpFab {
+  margin-bottom: 3rem;
+}

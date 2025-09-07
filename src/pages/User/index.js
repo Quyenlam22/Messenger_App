@@ -1,4 +1,4 @@
-import { Avatar, List, Badge, Carousel, Image, Button, Col, Row } from "antd";
+import { Avatar, List, Badge, Carousel, Image, Button, Col, Row, Flex } from "antd";
 import "./User.scss";
 import { useContext, useEffect } from "react";
 import { AppContext } from "../../Context/AppProvider";
@@ -18,17 +18,15 @@ function sliceArray(arr, size) {
 }
 
 function User() {
-  const { friends, selectedRoomId, setSelectedRoomId } = useContext(AppContext);
+  const { friends, setSelectedRoomId } = useContext(AppContext);
   const user = useContext(AuthContext);
   const navigate = useNavigate();
 
   const { width } = useWindowSize();
 
   useEffect(() => {
-    if(selectedRoomId) {
-      setSelectedRoomId("");
-    }
-  }, [selectedRoomId, setSelectedRoomId])
+    setSelectedRoomId("");
+  }, [setSelectedRoomId])
 
   let userSlice = [];
 
@@ -77,58 +75,64 @@ function User() {
   return (
     <div className="user-list">
       {width > 576 ? (
-        <Carousel 
-          autoplay
-          arrows 
-          infinite={false}
-        >
-          {userSlice.map((users, rowIndex) => (
-            <div>
-              <Row
-                gutter={[16, { xs: 8, sm: 16, md: 24, lg: 32 }]}
-                key={rowIndex}
-                style={{ marginBottom: 24 }}
-              >
-                {users.map((item) => (
-                  <Col key={item.id} sm={12} md={12} lg={8} xl={6}>
-                    <div className="user-list__box">
-                      <Badge
-                        dot
-                        status={item.state === "online" ? "success" : "default"}
-                        offset={[-8, 8]}
-                      >
-                        {item.photoURL ? (
-                          <Image
-                            preview={false}
-                            style={{ width: "100%", height: 200, objectFit: "cover" }}
-                            src={item.photoURL}
-                          />
-                        ) : (
-                          <Avatar
-                            shape="square"
-                            style={{
-                              width: "100%",
-                              height: 200,
-                              fontSize: 64,
-                            }}
-                          >
-                            {item.displayName?.charAt(0).toUpperCase()}
-                          </Avatar>
-                        )}
-                      </Badge>
-                      <div className="user-list__content">
-                        <h3>{item.displayName}</h3>
-                        <Button type="primary" onClick={() => handleCreateRoom(item)}>
-                          <MessageOutlined /> Send Message
-                        </Button>
+        (friends.length > 0) ? (
+          <Carousel 
+            autoplay
+            arrows 
+            infinite={false}
+          >
+            {userSlice.map((users, rowIndex) => (
+              <div>
+                <Row
+                  gutter={[16, { xs: 8, sm: 16, md: 24, lg: 32 }]}
+                  key={rowIndex}
+                  style={{ marginBottom: 24 }}
+                >
+                  {users.map((item) => (
+                    <Col key={item.id} sm={12} md={12} lg={8} xl={6}>
+                      <div className="user-list__box">
+                        <Badge
+                          dot
+                          status={item.state === "online" ? "success" : "default"}
+                          offset={[-8, 8]}
+                        >
+                          {item.photoURL ? (
+                            <Image
+                              preview={false}
+                              style={{ width: "100%", height: 200, objectFit: "cover" }}
+                              src={item.photoURL}
+                            />
+                          ) : (
+                            <Avatar
+                              shape="square"
+                              style={{
+                                width: "100%",
+                                height: 200,
+                                fontSize: 64,
+                              }}
+                            >
+                              {item.displayName?.charAt(0).toUpperCase()}
+                            </Avatar>
+                          )}
+                        </Badge>
+                        <div className="user-list__content">
+                          <h3>{item.displayName}</h3>
+                          <Button type="primary" onClick={() => handleCreateRoom(item)}>
+                            <MessageOutlined /> Send Message
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  </Col>
-                ))}
-              </Row>
-            </div>
-          ))}
-        </Carousel>
+                    </Col>
+                  ))}
+                </Row>
+              </div>
+            ))}
+          </Carousel>
+        ) : (
+          <Flex justify="center">
+            <p className="no-data">No Data</p>
+          </Flex>
+        )
       ) : (
         <List
           itemLayout="horizontal"

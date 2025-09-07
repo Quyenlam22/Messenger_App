@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import useFirestore from "../hooks/useFirestore";
 import { AuthContext } from "./AuthProvider";
 import { message } from "antd";
@@ -7,8 +7,18 @@ export const AppContext = createContext();
 
 function AppProvider ({ children }) {
   const user = useContext(AuthContext);
-  const [selectedRoomId, setSelectedRoomId] = useState('');
   const [messageApi, contextHolder] = message.useMessage();
+
+  const savedRoomId = sessionStorage.getItem("selectedRoomId");
+  const [selectedRoomId, setSelectedRoomId] = useState(savedRoomId || '');
+
+  useEffect(() => {
+    if (selectedRoomId) {
+      sessionStorage.setItem("selectedRoomId", selectedRoomId);
+    } else {
+      sessionStorage.removeItem("selectedRoomId");
+    }
+  }, [selectedRoomId]);
 
   // useEffect(() => {
   //   const unsubscribe = onSnapshot(collection(db, "users"), (snapshot) => {
@@ -39,6 +49,22 @@ function AppProvider ({ children }) {
   const selectedRoom = useMemo(() => (
     rooms.find(room => room.id === selectedRoomId)
   ), [rooms, selectedRoomId]);
+
+  const roomBotsCondition = useMemo(() => {
+    if (!user?.uid) return null;
+    return {
+      fieldName: "owner",
+      operator: "==",
+      compareValue: user.uid
+    };
+  }, [user?.uid])
+
+  const roomBots = useFirestore("bots", roomBotsCondition);
+
+  const selectedRoomBot = useMemo(() => (
+    roomBots.find(room => room.id === selectedRoomId)
+  ), [roomBots, selectedRoomId]);
+
   const membersCondition = useMemo(() => {
     if (!selectedRoom?.members || selectedRoom.members.length === 0) return null;
     return {
@@ -93,6 +119,8 @@ function AppProvider ({ children }) {
             selectedRoomId, 
             setSelectedRoomId, 
             selectedRoom, 
+            roomBots,
+            selectedRoomBot,
             members, 
             membersInvite, 
             messages,

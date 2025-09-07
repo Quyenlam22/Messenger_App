@@ -4,7 +4,8 @@ import { db } from "./config"
 export const addDocument = async (collectionName, data) => {
   try {
     const query = collection(db, collectionName);
-    await addDoc(query, data);
+    const docRef = await addDoc(query, data);
+    return docRef;
   } catch (error) {
     console.error("Error adding document: ", error);
   }

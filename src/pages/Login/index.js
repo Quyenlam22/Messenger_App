@@ -24,10 +24,19 @@ function Login () {
     try {
       await authWithEmail(email, password, mode, displayName);
     } catch (error) {
-      messageApi.open({
-        type: 'error',
-        content: 'Email is already in the system!',
-      });
+      if(mode === "login"){
+        messageApi.open({
+          type: 'error',
+          content: 'Email or password is not correct!',
+        });
+      }
+      else if (mode === "register") {
+        messageApi.open({
+          type: 'error',
+          content: 'Email is already in the system!',
+        });
+      }
+      
     } finally {
       setLoading(false);
     }
